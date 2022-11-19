@@ -122,5 +122,5 @@ typedef struct {
 } esp_app_desc_t;
 
 /** @cond */
-_Static_assert(sizeof(esp_app_desc_t) == 256, "esp_app_desc_t should be 256 bytes");
+//_Static_assert(sizeof(esp_app_desc_t) == 256, "esp_app_desc_t should be 256 bytes");
 /** @endcond */
