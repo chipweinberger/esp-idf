@@ -494,7 +494,7 @@ void IRAM_ATTR call_start_cpu0(void)
 
 #if CONFIG_ESP32S3_DATA_CACHE_16KB
     Cache_Invalidate_DCache_All();
-    Cache_Occupy_Addr(SOC_DROM_LOW, 0x4000);
+    Cache_Occupy_Addr(SOC_IRAM_LOW, 0x4000);
 #endif
 
 #if CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY

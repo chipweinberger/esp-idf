@@ -421,58 +421,74 @@ void esp_efuse_init_virtual_mode_in_flash(uint32_t offset, uint32_t size)
 void esp_efuse_utility_erase_efuses_in_flash(void)
 {
     if (esp_efuse_flash_offset == 0) {
-        ESP_EARLY_LOGE(TAG, "no efuse partition in partition_table? (Flash is not updated)");
+        ESP_EARLY_LOGE(TAG, "Virtual eFuse: no efuse partition in partition_table? (Flash is not updated)");
         abort();
     }
     esp_err_t err = bootloader_flash_erase_range(esp_efuse_flash_offset, esp_efuse_flash_size);
     if (err != ESP_OK) {
-        ESP_EARLY_LOGE(TAG, "Failed to erase flash. err = 0x%x", err);
+        ESP_EARLY_LOGE(TAG, "Virtual eFuse: Failed to erase flash. err = 0x%x", err);
         abort();
     }
 }
 
 bool esp_efuse_utility_load_efuses_from_flash(void)
 {
+    ESP_EARLY_LOGW(TAG, "Virtual eFuse: loading efuses from flash");
+
     if (esp_efuse_flash_offset == 0) {
-        ESP_EARLY_LOGE(TAG, "no efuse partition in partition_table? (Flash is not updated)");
+        ESP_EARLY_LOGE(TAG, "Virtual eFuse: no efuse partition in partition_table? (Flash is not updated)");
         abort();
     }
+
     uint32_t efuses_in_flash[sizeof(virt_blocks)];
 
     esp_err_t err = bootloader_flash_read(esp_efuse_flash_offset, &efuses_in_flash, sizeof(efuses_in_flash), true);
     if (err != ESP_OK) {
-        ESP_EARLY_LOGE(TAG, "Can not read eFuse partition from flash (err=0x%x)", err);
+        ESP_EARLY_LOGE(TAG, "Virtual eFuse: Can not read eFuse partition from flash (err=0x%x)", err);
         abort();
     }
 
     for (unsigned i = 0; i < sizeof(virt_blocks); ++i) {
         if (efuses_in_flash[i] != 0xFFFFFFFF) {
-            ESP_EARLY_LOGW(TAG, "Loading virtual efuse blocks from flash");
+            ESP_EARLY_LOGW(TAG, "Virtual eFuse: Loading virtual efuse blocks from flash");
             memcpy(virt_blocks, efuses_in_flash, sizeof(virt_blocks));
             return true;
         }
-    }
+    } 
+
+    ESP_EARLY_LOGW(TAG, "Virtual eFuse: no fuses found in flash");
     return false;
 }
 
 void esp_efuse_utility_write_efuses_to_flash(void)
 {
+    ESP_EARLY_LOGW(TAG, "Virtual eFuse: writing to flash: 0x%x (offset)", esp_efuse_flash_offset);
+
+    for (int i = 0; i < EFUSE_BLK_MAX; i++){
+        ESP_EARLY_LOGW(TAG, "Virtual eFuse: [BLOCK%i] 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x",
+            i,
+            virt_blocks[i][0], virt_blocks[i][1], virt_blocks[i][2], virt_blocks[i][3],
+            virt_blocks[i][4], virt_blocks[i][5], virt_blocks[i][6], virt_blocks[i][7]);
+    }
+
     if (esp_efuse_flash_offset == 0) {
-        ESP_EARLY_LOGE(TAG, "no efuse partition in partition_table? (Flash is not updated)");
+        ESP_EARLY_LOGE(TAG, "Virtual eFuse: no efuse partition in partition_table? (Flash is not updated)");
         abort();
     }
 
     esp_err_t err = bootloader_flash_erase_range(esp_efuse_flash_offset, esp_efuse_flash_size);
     if (err != ESP_OK) {
-        ESP_EARLY_LOGE(TAG, "Failed to erase flash. err = 0x%x", err);
+        ESP_EARLY_LOGE(TAG, "Virtual eFuse: Failed to erase flash. err = 0x%x", err);
         abort();
     }
 
     err = bootloader_flash_write(esp_efuse_flash_offset, &virt_blocks, sizeof(virt_blocks), false);
     if (err != ESP_OK) {
-        ESP_EARLY_LOGE(TAG, "secure_version can not be written to flash. err = 0x%x", err);
+        ESP_EARLY_LOGE(TAG, "Virtual eFuse: secure_version can not be written to flash. err = 0x%x", err);
         abort();
     }
+
+    ESP_EARLY_LOGW(TAG, "Virtual eFuse: writing complete");
 }
 #endif // CONFIG_EFUSE_VIRTUAL_KEEP_IN_FLASH
 

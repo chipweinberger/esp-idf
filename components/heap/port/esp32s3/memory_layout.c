@@ -103,7 +103,7 @@ const soc_memory_region_t soc_memory_regions[] = {
     { 0x3FCF0000,           0x8000,                                     SOC_MEMORY_TYPE_DRAM,       0}, //Level 9, DRAM, DMA is accessible but retention DMA is inaccessible
 #endif
 #if CONFIG_ESP32S3_DATA_CACHE_16KB
-    { 0x3C000000,           0x4000,                                     SOC_MEMORY_TYPE_DRAM,       0}, //Level 10, DRAM, DMA is accessible but retention DMA is inaccessible
+    { SOC_IRAM_LOW + 0x4000,  0x4000,                                     SOC_MEMORY_TYPE_DRAM,       0}, //Level 10, DRAM, DMA is accessible but retention DMA is inaccessible
 #endif
 #ifdef CONFIG_ESP_SYSTEM_ALLOW_RTC_FAST_MEM_AS_HEAP
     { 0x600fe000,           0x2000,                                     SOC_MEMORY_TYPE_RTCRAM,     0}, //Fast RTC memory
