@@ -249,6 +249,7 @@ static int esp_aes_process_dma_ext_ram(esp_aes_context *ctx, const unsigned char
     chunk_len = MIN(AES_MAX_CHUNK_WRITE_SIZE, len);
 
     if (realloc_input) {
+
         input_buf = heap_caps_malloc(chunk_len, MALLOC_CAP_DMA);
 
         if (input_buf == NULL) {
@@ -259,6 +260,7 @@ static int esp_aes_process_dma_ext_ram(esp_aes_context *ctx, const unsigned char
     }
 
     if (realloc_output) {
+
         output_buf = heap_caps_malloc(chunk_len, MALLOC_CAP_DMA);
 
         if (output_buf == NULL) {
