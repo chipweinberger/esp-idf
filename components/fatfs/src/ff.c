@@ -208,6 +208,36 @@
 /* Post process on fatal error in the file operations */
 #define ABORT(fs, res)		{ fp->err = (BYTE)(res); LEAVE_FF(fs, res); }
 
+/*
+static FRESULT frprint(FRESULT res, const char* func, int line) {
+	printf("\033[31;1m ff: %s, line %u, FRRESULT %u \033[0m\n", func, line, res);
+	return res;
+}
+
+#define FRP(res) frprint(res, __FUNCTION__, __LINE__)
+
+#define FR_DENIED 				FRP(FR_DENIED)
+#define FR_DISK_ERR 			FRP(FR_DISK_ERR)	
+#define FR_INT_ERR 				FRP(FR_INT_ERR)			
+#define FR_NOT_READY 			FRP(FR_NOT_READY)			
+#define FR_NO_FILE 				FRP(FR_NO_FILE)
+#define FR_NO_PATH				FRP(FR_NO_PATH)	
+#define FR_INVALID_NAME			FRP(FR_INVALID_NAME)
+#define FR_DENIED				FRP(FR_DENIED)
+#define FR_EXIST				FRP(FR_EXIST)
+#define FR_INVALID_OBJECT		FRP(FR_INVALID_OBJECT)
+#define FR_WRITE_PROTECTED		FRP(FR_WRITE_PROTECTED)
+#define FR_INVALID_DRIVE		FRP(FR_INVALID_DRIVE)
+#define FR_NOT_ENABLED			FRP(FR_NOT_ENABLED)
+#define FR_NO_FILESYSTEM		FRP(FR_NO_FILESYSTEM)
+#define FR_MKFS_ABORTED			FRP(FR_MKFS_ABORTED)
+#define FR_TIMEOUT				FRP(FR_TIMEOUT)
+#define FR_LOCKED				FRP(FR_LOCKED)
+#define FR_NOT_ENOUGH_CORE		FRP(FR_NOT_ENOUGH_CORE)
+#define FR_TOO_MANY_OPEN_FILES	FRP(FR_TOO_MANY_OPEN_FILES)
+#define FR_INVALID_PARAMETER	FRP(FR_INVALID_PARAMETER)
+*/
+
 
 /* Re-entrancy related */
 #if FF_FS_REENTRANT
