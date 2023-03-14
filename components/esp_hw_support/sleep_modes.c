@@ -226,20 +226,20 @@ static void RTC_IRAM_ATTR __attribute__((used, noinline)) esp_wake_stub_start(vo
  * must be simple enough to ensure that there is no litteral data before the
  * wake stub entry, otherwise, the litteral data before the wake stub entry
  * will not be CRC checked. */
-static void __attribute__((section(".rtc.entry.text"))) esp_wake_stub_entry(void)
-{
-#define _SYM2STR(s) # s
-#define SYM2STR(s)  _SYM2STR(s)
-
-#ifdef __riscv
-    __asm__ __volatile__ ("call " SYM2STR(esp_wake_stub_start) "\n");
-#else
-    // call4 has a larger effective addressing range (-524284 to 524288 bytes),
-    // which is sufficient for instruction addressing in RTC fast memory.
-    __asm__ __volatile__ ("call4 " SYM2STR(esp_wake_stub_start) "\n");
-#endif
-
-}
+//static void __attribute__((section(".rtc.entry.text"))) esp_wake_stub_entry(void)
+//{
+//#define _SYM2STR(s) # s
+//#define SYM2STR(s)  _SYM2STR(s)
+//
+//#ifdef __riscv
+//    __asm__ __volatile__ ("call " SYM2STR(esp_wake_stub_start) "\n");
+//#else
+//    // call4 has a larger effective addressing range (-524284 to 524288 bytes),
+//    // which is sufficient for instruction addressing in RTC fast memory.
+//    __asm__ __volatile__ ("call4 " SYM2STR(esp_wake_stub_start) "\n");
+//#endif
+//
+//}
 #endif // SOC_PM_SUPPORT_DEEPSLEEP_CHECK_STUB_ONLY
 
 /* Wake from deep sleep stub
@@ -514,16 +514,17 @@ static uint32_t IRAM_ATTR esp_sleep_start(uint32_t pd_flags)
 #endif
 
 #if SOC_PM_SUPPORT_DEEPSLEEP_CHECK_STUB_ONLY
-        extern char _rtc_text_start[];
-#if CONFIG_ESP32S3_RTCDATA_IN_FAST_MEM
-        extern char _rtc_noinit_end[];
-        size_t rtc_fast_length = (size_t)_rtc_noinit_end - (size_t)_rtc_text_start;
-#else
-        extern char _rtc_force_fast_end[];
-        size_t rtc_fast_length = (size_t)_rtc_force_fast_end - (size_t)_rtc_text_start;
-#endif
-        esp_rom_set_rtc_wake_addr((esp_rom_wake_func_t)esp_wake_stub_entry, rtc_fast_length);
-        result = call_rtc_sleep_start(reject_triggers, config.lslp_mem_inf_fpu);
+//        extern char _rtc_text_start[];
+//#if CONFIG_ESP32S3_RTCDATA_IN_FAST_MEM
+//        extern char _rtc_noinit_end[];
+//        size_t rtc_fast_length = (size_t)_rtc_noinit_end - (size_t)_rtc_text_start;
+//#else
+//        extern char _rtc_force_fast_end[];
+//        size_t rtc_fast_length = (size_t)_rtc_force_fast_end - (size_t)_rtc_text_start;
+//#endif
+//        esp_rom_set_rtc_wake_addr((esp_rom_wake_func_t)esp_wake_stub_entry, rtc_fast_length);
+//        result = call_rtc_sleep_start(reject_triggers, config.lslp_mem_inf_fpu);
+    result = 0;
 #else
 #if !CONFIG_ESP_SYSTEM_ALLOW_RTC_FAST_MEM_AS_HEAP
         /* If not possible stack is in RTC FAST memory, use the ROM function to calculate the CRC and save ~140 bytes IRAM */
