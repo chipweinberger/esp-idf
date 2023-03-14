@@ -85,8 +85,12 @@ menu "FreeRTOS"
                 Set the number of thread local storage pointers in each task (see
                 configNUM_THREAD_LOCAL_STORAGE_POINTERS documentation for more details).
 
-                Note: In ESP-IDF, this value must be at least 1. Index 0 is reserved for use by the pthreads API
-                thread-local-storage. Other indexes can be used for any desired purpose.
+                This value must be at least 1.
+                If stack mirrors are enabled, this value must be at least 2.
+                Index 0 is reserved for use by the pthreads API thread-local-storage.
+                Index 1 is reserved for use by the stack mirror pointer (if enabled).
+
+                Other indexes can be used for any desired purpose.
 
         config FREERTOS_IDLE_TASK_STACKSIZE
             int "configMINIMAL_STACK_SIZE (Idle task stack size)"
