@@ -109,9 +109,11 @@ esp_err_t IRAM_ATTR esp_backtrace_print(int depth)
     esp_backtrace_frame_t start = { 0 };
     esp_backtrace_get_start(&(start.pc), &(start.sp), &(start.next_pc));
     esp_err_t err = esp_backtrace_print_from_frame(depth, &start, false);
-    //if (err != ESP_OK) {
+    if (err != ESP_OK) {
+#if CONFIG_COMPILER_STACK_MIRROR
         stack_mirror_print_backtrace(false);
-    //}
+#endif
+    }
     return err;
 }
 
