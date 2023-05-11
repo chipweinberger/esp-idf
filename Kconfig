@@ -383,7 +383,7 @@ mainmenu "Espressif IoT Development Framework Configuration"
         config COMPILER_STACK_MIRROR
             prompt "Enable Stack Mirror"
             bool
-            default "y"
+            default "n"
             help
                 Make corrupted backtraces much less likely by creating a dupliate copy of stack return 
                 addresses in heap memory. Requires about 100 bytes of memory per thread.
