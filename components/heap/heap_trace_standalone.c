@@ -139,6 +139,7 @@ esp_err_t heap_trace_init_standalone(heap_trace_record_t *record_buffer, size_t 
         return ESP_ERR_INVALID_ARG;
     }
 
+#if CONFIG_HEAP_TRACE_HASH_MAP
     if (hash_map == NULL) {
         uint32_t map_size = sizeof(heap_trace_hash_list_t) * CONFIG_HEAP_TRACE_HASH_MAP_SIZE;
 #if CONFIG_HEAP_TRACE_HASH_MAP_IN_EXT_RAM
@@ -147,8 +148,9 @@ esp_err_t heap_trace_init_standalone(heap_trace_record_t *record_buffer, size_t 
 #else 
         esp_rom_printf("[Heap Trace] hash map: allocating %" PRIu32 " bytes (Internal RAM)", map_size);
         hash_map = heap_caps_calloc(1, map_size, MALLOC_CAP_INTERNAL);
-#endif
+#endif // CONFIG_HEAP_TRACE_HASH_MAP_IN_EXT_RAM
     }
+#endif // CONFIG_HEAP_TRACE_HASH_MAP
 
     records.buffer = record_buffer;
     records.capacity = num_records;
