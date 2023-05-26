@@ -84,7 +84,10 @@ static size_t r_get_idx;
 TAILQ_HEAD(heap_trace_hash_list_struct_t, heap_trace_record_t);
 typedef struct heap_trace_hash_list_struct_t heap_trace_hash_list_t;
 
-static heap_trace_hash_list_t hash_map[(size_t)CONFIG_HEAP_TRACE_HASH_MAP_SIZE]; // Buffer used for hashmap entries
+// We use a hash_map to make locating a record by memory address very fast.
+//   Key: addr                  // the memory address returned by malloc, calloc, realloc
+//   Value: hash_map[hash(key)] // a list of records ptrs, which contains the relevant record.
+static heap_trace_hash_list_t* hash_map; 
 static size_t total_hashmap_hits;
 static size_t total_hashmap_miss;
 
@@ -134,6 +137,17 @@ esp_err_t heap_trace_init_standalone(heap_trace_record_t *record_buffer, size_t 
 
     if (record_buffer == NULL || num_records == 0) {
         return ESP_ERR_INVALID_ARG;
+    }
+
+    if (hash_map == NULL) {
+        uint32_t map_size = sizeof(heap_trace_hash_list_t) * CONFIG_HEAP_TRACE_HASH_MAP_SIZE;
+#if CONFIG_HEAP_TRACE_HASH_MAP_IN_EXT_RAM
+        ESP_LOGI(TAG, "hash map: allocating %" PRIu32 " bytes (PSRAM)", map_size);
+        hash_map = heap_caps_calloc(1, map_size, MALLOC_CAP_SPIRAM);
+#else 
+        ESP_LOGI(TAG, "hash map: allocating %" PRIu32 " bytes (Internal RAM)", map_size);
+        hash_map = heap_caps_calloc(1, map_size, MALLOC_CAP_INTERNAL);
+#endif
     }
 
     records.buffer = record_buffer;

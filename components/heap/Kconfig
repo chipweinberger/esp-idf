@@ -88,11 +88,19 @@ menu "Heap memory debugging"
         int "The number of entries in the hash map"
         depends on HEAP_TRACE_HASH_MAP
         range 1 10000
-        default 10
+        default 512
         help
             Defines the number of entries in the heap trace hashmap. The bigger this number is,
             the bigger the hash map will be in the memory. In case the tracing mode is set to
             HEAP_TRACE_ALL, the bigger the hashmap is, the better the performances are.
+
+    config HEAP_TRACE_HASH_MAP_IN_EXT_RAM
+        bool "Place hash map in external RAM"
+        depends on HEAP_TRACE_HASH_MAP
+        default n
+        help
+            When enabled this configuration forces the hash map to be placed in the bss section
+            of the external RAM.
 
     config HEAP_ABORT_WHEN_ALLOCATION_FAILS
         bool "Abort if memory allocation fails"
