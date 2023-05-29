@@ -7,6 +7,7 @@
 #include <sdkconfig.h>
 #include <inttypes.h>
 
+#include "esp_log.h"
 #define HEAP_TRACE_SRCFILE /* don't warn on inclusion here */
 #include "esp_heap_trace.h"
 #undef HEAP_TRACE_SRCFILE
@@ -16,6 +17,8 @@
 #include "freertos/task.h"
 #include "esp_memory_utils.h"
 #include "sys/queue.h"
+
+static const char* TAG = "heaptrace";
 
 #define STACK_DEPTH CONFIG_HEAP_TRACING_STACK_DEPTH
 
@@ -143,10 +146,10 @@ esp_err_t heap_trace_init_standalone(heap_trace_record_t *record_buffer, size_t 
     if (hash_map == NULL) {
         uint32_t map_size = sizeof(heap_trace_hash_list_t) * CONFIG_HEAP_TRACE_HASH_MAP_SIZE;
 #if CONFIG_HEAP_TRACE_HASH_MAP_IN_EXT_RAM
-        esp_rom_printf("[Heap Trace] hash map: allocating %" PRIu32 " bytes (PSRAM)", map_size);
+        ESP_LOGI(TAG, "hashmap: allocating %" PRIu32 " bytes (PSRAM)", map_size);
         hash_map = heap_caps_calloc(1, map_size, MALLOC_CAP_SPIRAM);
 #else 
-        esp_rom_printf("[Heap Trace] hash map: allocating %" PRIu32 " bytes (Internal RAM)", map_size);
+        ESP_LOGI(TAG, "hashmap: allocating %" PRIu32 " bytes (Internal RAM)", map_size);
         hash_map = heap_caps_calloc(1, map_size, MALLOC_CAP_INTERNAL);
 #endif // CONFIG_HEAP_TRACE_HASH_MAP_IN_EXT_RAM
     }
