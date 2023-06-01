@@ -1,0 +1,12 @@
+menu "Console"
+
+    config ESP_CONSOLE_USE_PSRAM
+        bool "Use PSRAM for memory allocated by the console"
+        depends on SPIRAM
+        default n
+        help
+            Where possible, use PSRAM for memory allocated by the console.
+            This includes memory allocated by esp_console_cmd_register and
+            other temporary buffers.
+
+endmenu

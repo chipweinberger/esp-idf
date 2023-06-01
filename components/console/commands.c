@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/param.h>
+#include "esp_heap_caps.h"
 #include "esp_log.h"
 #include "esp_console.h"
 #include "esp_system.h"
@@ -59,7 +60,11 @@ esp_err_t esp_console_init(const esp_console_config_t *config)
     if (s_config.hint_color == 0) {
         s_config.hint_color = ANSI_COLOR_DEFAULT;
     }
+#if CONFIG_ESP_CONSOLE_USE_PSRAM
+    s_tmp_line_buf = heap_caps_calloc(config->max_cmdline_length, 1, MALLOC_CAP_SPIRAM);
+#else
     s_tmp_line_buf = calloc(config->max_cmdline_length, 1);
+#endif
     if (s_tmp_line_buf == NULL) {
         return ESP_ERR_NO_MEM;
     }
@@ -94,7 +99,11 @@ esp_err_t esp_console_cmd_register(const esp_console_cmd_t *cmd)
     item = (cmd_item_t *)find_command_by_name(cmd->command);
     if (!item) {
         // not registered before
+#if CONFIG_ESP_CONSOLE_USE_PSRAM
+        item = heap_caps_calloc(1, sizeof(*item), MALLOC_CAP_SPIRAM);
+#else
         item = calloc(1, sizeof(*item));
+#endif
         if (item == NULL) {
             return ESP_ERR_NO_MEM;
         }
@@ -187,7 +196,11 @@ esp_err_t esp_console_run(const char *cmdline, int *cmd_ret)
     if (s_tmp_line_buf == NULL) {
         return ESP_ERR_INVALID_STATE;
     }
+#if CONFIG_ESP_CONSOLE_USE_PSRAM
+    char **argv = (char **) heap_caps_calloc(s_config.max_cmdline_args, sizeof(char *), MALLOC_CAP_SPIRAM);
+#else
     char **argv = (char **) calloc(s_config.max_cmdline_args, sizeof(char *));
+#endif
     if (argv == NULL) {
         return ESP_ERR_NO_MEM;
     }
