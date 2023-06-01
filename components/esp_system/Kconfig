@@ -39,13 +39,6 @@ menu "ESP System Settings"
             help
                 Invoke gdbstub on the serial port, allowing for gdb to attach to it to do a postmortem
                 of the crash.
-
-        config ESP_SYSTEM_GDBSTUB_RUNTIME
-            bool "GDBStub at runtime"
-            select ESP_GDBSTUB_ENABLED
-            depends on !IDF_TARGET_ESP32C2
-            help
-                Invoke gdbstub on the serial port, allowing for gdb to attach to it and to do a debug on runtime.
     endchoice
 
     config ESP_SYSTEM_PANIC_REBOOT_DELAY_SECONDS
@@ -56,6 +49,19 @@ menu "ESP System Settings"
         help
             After the panic handler executes, you can specify a number of seconds to
             wait before the device reboots.
+
+    config ESP_SYSTEM_GDBSTUB_RUNTIME
+        bool "GDBStub at runtime"
+        select ESP_GDBSTUB_ENABLED
+        default n
+        depends on !IDF_TARGET_ESP32C2
+        help
+            Invoke gdbstub on the serial port, allowing for idf.py monitor to debug your
+            device using GDB. To enter this mode you must enable this KConfig, reflash your
+            device, run idf.py monitor, wait for the device to reboot, and then press ctrl-c.
+            idf.py monitor should then enter GDB and attach to your device. You can also
+            invoke GDB directly from bin/xtensa-esp32-elf-gdb, bin/xtensa-esp32s3-elf-gdb, etc,
+            depending on your device.
 
     config ESP_SYSTEM_SINGLE_CORE_MODE
         bool
