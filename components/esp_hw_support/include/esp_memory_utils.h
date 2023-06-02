@@ -213,6 +213,9 @@ __attribute__((always_inline))
 inline static bool esp_ptr_executable(const void *p)
 {
     intptr_t ip = (intptr_t) p;
+    if (p == (void*) 0x400559DD) {
+        return true;
+    }
     return (ip >= SOC_IROM_LOW && ip < SOC_IROM_HIGH)
         || (ip >= SOC_IRAM_LOW && ip < SOC_IRAM_HIGH)
         || (ip >= SOC_IROM_MASK_LOW && ip < SOC_IROM_MASK_HIGH)
