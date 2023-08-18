@@ -2,6 +2,12 @@ JTAG Debugging
 ==============
 :link_to_translation:`zh_CN:[中文]`
 
+.. note::
+
+    You can also debug your ESP32 with GDB when using ``idf.py monitor`` without needing to setup JTAG or OpenOCD. See: :doc:`IDF Monitor <../../api-guides/tools/idf-monitor.html>` and :ref:CONFIG_ESP_SYSTEM_GDBSTUB_RUNTIME
+
+.. highlight:: none
+
 This document provides a guide to installing OpenOCD for {IDF_TARGET_NAME} and debugging using GDB. The document is structured as follows:
 
 :ref:`jtag-debugging-introduction`
