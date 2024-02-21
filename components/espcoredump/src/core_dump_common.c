@@ -145,6 +145,11 @@ static void* s_exc_frame = NULL;
 
 inline void esp_core_dump_write(panic_info_t *info, core_dump_write_config_t *write_cfg)
 {
+    // hack: adding this log somehow prevents a crash, due to some GCC bug 
+    //      when using COMPILER_STACK_CHECK_MODE_ALL 
+    // see: https://github.com/espressif/esp-idf/issues/13224
+    ESP_COREDUMP_LOGI("write_cfg %p", write_cfg);
+
 #ifndef CONFIG_ESP_COREDUMP_ENABLE_TO_NONE
     esp_err_t err = ESP_ERR_NOT_SUPPORTED;
     s_exc_frame = (void*) info->frame;
