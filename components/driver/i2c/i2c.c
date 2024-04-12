@@ -1028,21 +1028,28 @@ esp_err_t i2c_master_read_from_device(i2c_port_t i2c_num, uint8_t device_address
 
     err = i2c_master_start(handle);
     if (err != ESP_OK) {
+        ESP_LOGE("i2c", "i2c_master_start failed");
         goto end;
     }
 
     err = i2c_master_write_byte(handle, device_address << 1 | I2C_MASTER_READ, true);
     if (err != ESP_OK) {
+        ESP_LOGE("i2c", "i2c_master_write_byte failed");
         goto end;
     }
 
     err = i2c_master_read(handle, read_buffer, read_size, I2C_MASTER_LAST_NACK);
     if (err != ESP_OK) {
+        ESP_LOGE("i2c", "i2c_master_read failed");
         goto end;
     }
 
     i2c_master_stop(handle);
     err = i2c_master_cmd_begin(i2c_num, handle, ticks_to_wait);
+    if (err != ESP_OK) {
+        ESP_LOGE("i2c", "i2c_master_cmd_begin failed");
+        goto end;
+    }
 
 end:
     i2c_cmd_link_delete_static(handle);
@@ -1571,6 +1578,7 @@ esp_err_t i2c_master_cmd_begin(i2c_port_t i2c_num, i2c_cmd_handle_t cmd_handle, 
                         clear_bus_cnt[i2c_num] = 0;
                         i2c_hw_fsm_reset(i2c_num);
                     }
+                    ESP_LOGE("i2c", "ack error");
                     ret = ESP_FAIL;
                 } else {
                     ret = ESP_OK;
