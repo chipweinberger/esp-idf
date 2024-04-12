@@ -835,7 +835,7 @@ static void root_port_handle_events(hcd_port_handle_t root_port_hdl)
                     pass_event_to_usbh = true;
                     break;
                 default:
-                    abort();    //Should never occur
+                    //abort();    //Should never occur
                     break;
             }
             p_hub_driver_obj->dynamic.driver_state = HUB_DRIVER_STATE_ROOT_RECOVERY;
