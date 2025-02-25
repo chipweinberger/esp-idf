@@ -881,6 +881,11 @@ static void root_port_handle_events(hcd_port_handle_t root_port_hdl)
             break;
         case HUB_DRIVER_STATE_ROOT_ENUM:
             // This occurred during enumeration. Therefore, we need to recover the failed enumeration
+            // Because we want to in this order:
+            //     1. Reset ENUM FSM
+            //     2. Recover the port
+            // We do not set action 'HUB_DRIVER_FLAG_ACTION_PORT_RECOVER' here,
+            // it will be set from enum_handle_events()->enum_stage_cleanup_failed()
             p_hub_driver_obj->dynamic.flags.actions |= HUB_DRIVER_FLAG_ACTION_ENUM_EVENT;
             p_hub_driver_obj->single_thread.enum_ctrl.stage = ENUM_STAGE_CLEANUP_FAILED;
             break;
@@ -889,7 +894,12 @@ static void root_port_handle_events(hcd_port_handle_t root_port_hdl)
             pass_event_to_usbh = true;
             break;
         default:
-            abort();    // Should never occur
+            // In a very rare case of having 2 or more events of type DISCONNECTION/ERROR/OVERCURRENT
+            // in a short time, we can endup here, where the driver has not yet recovered from
+            // the 1st error but already got a 2nd error.
+            // Just check that the RECOVER action is requested and return
+            // @todo run a simulation of this edge case
+            assert(p_hub_driver_obj->dynamic.flags.actions | HUB_DRIVER_FLAG_ACTION_PORT_RECOVER);
             break;
         }
         p_hub_driver_obj->dynamic.driver_state = HUB_DRIVER_STATE_ROOT_RECOVERY;
